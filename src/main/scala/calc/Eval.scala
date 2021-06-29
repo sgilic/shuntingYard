@@ -1,5 +1,8 @@
 package calc
 
+/*
+This module evaluates the AST (expr) and returns Double result
+ */
 object Eval {
   def eval(e: Expr): Double = {
     e match {

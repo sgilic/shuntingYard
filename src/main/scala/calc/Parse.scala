@@ -3,14 +3,19 @@ package calc
 import scala.collection.mutable
 import scala.collection.mutable.Stack
 
+/*
+This module responsibility is to parse the input string and generate the AST
+ */
 object Parse {
 
   private def addNode(op: Op, stack: Stack[Expr]): Unit = {
+    assert(stack.nonEmpty, "Expression stack shouldn't be empty")
     val rightSon = stack.pop()
+    assert(stack.nonEmpty, "Expression stack shouldn't be empty")
     val leftSon = stack.pop()
     stack.push(BinaryOp(op, leftSon, rightSon))
-    //TODO verify non empty stack
   }
+
   def isRParens(o: Char): Boolean = o == ')'
 
   def parseOp(c: Char): Option[Op] = {
@@ -28,7 +33,7 @@ object Parse {
     val exprStack: Stack[Expr] = new mutable.Stack[Expr]()
     val opStack: Stack[Option[Op]] = new mutable.Stack[Option[Op]]()
 
-    def precedenceLoop(o1: Op) : Unit = {
+    def precedenceLoop(o1: Op): Unit = {
       while (opStack.nonEmpty) {
         var o2: Op = opStack.top.getOrElse(return ())
         if ((o1.isLeftAssoc()) && (o1.precedence() <= o2.precedence())) {
@@ -62,6 +67,7 @@ object Parse {
     while (finalOpStack.nonEmpty) {
       addNode(finalOpStack.pop(), exprStack)
     }
+    assert(exprStack.nonEmpty, "Something went wrong, exprStack should not be empty")
     exprStack.pop()
   }
 
